@@ -5,13 +5,16 @@
 #include <driver/adc.h>
 
 #include "words.h"
+#include "dates.h"
 
 bool wifi_connected = false;
 
 enum STATE {
   OFF,
   ON,
-  UPDATE_TIME
+  UPDATE_TIME,
+  NEWYEAR,
+  CHECK_BIRTHDAYS,
 }; 
 
 enum STATE s; 
@@ -28,12 +31,14 @@ const int presistorPin = 35;
 int R = 0, G = 0, B = 0;
 int R_OLD = 0, G_OLD = 0, B_OLD = 0;
 int brightness=0;
+bool is_birthday = false;
 
 int minute = -1;
 
 void setup() {
   Serial.begin(115200);
   s = OFF;
+  srand(time(0));
 
   // DCF Setup
   //DCF.Start();
@@ -79,6 +84,7 @@ void setup() {
 
   configTime(3600, 3600, "pool.ntp.org");
   time(&now);
+
   // Set timezone to Germany
   //setenv("TZ", "ET-1CEST,M3.5.0,M10.5.0/03:00:00", 1);
   //tzset();
@@ -87,12 +93,73 @@ void setup() {
 
 //////////////////////////////////////
 
+void start_new_year_countdown(){
+  disable_all_leds();
+  enable_leds(ZWANZIG_1, sizeof(ZWANZIG_1), R, G, B);
+  pixels.show();
+  sleep(10);
+  disable_all_leds();
+  enable_leds(ZEHN_1, sizeof(ZEHN_1), R, G, B);
+  pixels.show();
+  sleep(1);
+  disable_all_leds();
+  enable_leds(NEUN, sizeof(NEUN), R, G, B);
+  pixels.show();
+  sleep(1);
+  disable_all_leds();
+  enable_leds(ACHT, sizeof(ACHT), R, G, B);
+  pixels.show();
+  sleep(1);
+  disable_all_leds();
+  enable_leds(SIEBEN, sizeof(SIEBEN), R, G, B);
+  pixels.show();
+  sleep(1);
+  disable_all_leds();
+  enable_leds(SECHS, sizeof(SECHS), R, G, B);
+  pixels.show();
+  sleep(1);
+  disable_all_leds();
+  enable_leds(FUENF, sizeof(FUENF), R, G, B);
+  pixels.show();
+  sleep(1);
+  disable_all_leds();
+  enable_leds(VIER, sizeof(VIER), R, G, B);
+  pixels.show();
+  sleep(1);
+  disable_all_leds();
+  enable_leds(DREI, sizeof(DREI), R, G, B);
+  pixels.show();
+  sleep(1);
+  disable_all_leds();
+  enable_leds(ZWEI, sizeof(ZWEI), R, G, B);
+  pixels.show();
+  sleep(1);
+  disable_all_leds();
+  enable_leds(EINS, sizeof(EINS), R, G, B);
+  pixels.show();
+  sleep(1);
+  disable_all_leds();
+  for(int i = 0; i < 240; i++){
+    enable_leds_party(ES_IST, sizeof(ES_IST));
+    enable_leds_party(UHR, sizeof(UHR));
+    enable_leds_party(ZWOELF, sizeof(ZWOELF));
+    enable_leds_party(DOTS, sizeof(DOTS));
+    pixels.show();
+    delay(500);
+  }
+  sleep(10);
+}
+
 void show_time(int hours, int minutes, uint8_t R, uint8_t G, uint8_t B){
   R_OLD = R;
   G_OLD = G; 
   B_OLD = B;
   disable_all_leds();
   enable_leds(ES_IST, sizeof(ES_IST), R, G, B);
+
+  if(is_birthday){
+    enable_leds(HEART_1, sizeof(HEART_1), 150, 0,0);
+  }
 
   // Set minutes
   bool h_plus_one = false;
@@ -186,6 +253,14 @@ void disable_all_leds(){
   pixels.clear();
 }
 
+void enable_leds_party(const uint8_t* ptr, int lenght){
+  for(int i =  0; i < lenght/sizeof(uint8_t); i++){
+    uint8_t colors[3] = {0, 0, 0};
+    colors[rand()%3] = 150;
+    pixels.setPixelColor(ptr[i], pixels.Color(rand()%150, rand()%150, rand()%150));
+  }
+}
+
 void enable_leds(const uint8_t* ptr, int lenght, uint8_t r, uint8_t g, uint8_t b){
   for(int i =  0; i < lenght/sizeof(uint8_t); i++){
     pixels.setPixelColor(ptr[i], pixels.Color(r, g, b));
@@ -207,18 +282,34 @@ void fetchTime(){
   //Serial.println(&t, "%A, %B %d %Y %H:%M:%S");
 }
 
-
 void loop(){  
   switch(s){
     case ON:
       fetchTime();
+      // Check for new year since that is obviously the most important
+      if(t.tm_mon == 11 && t.tm_mday == 31 && t.tm_hour == 23 && t.tm_min == 59 && t.tm_sec == 40){
+        s = NEWYEAR;
+        break;
+      }
       if(t.tm_min != minute){
         minute = t.tm_min;
         s = UPDATE_TIME;
+        break;
       }
       if(R != R_OLD || G != G_OLD || B != B_OLD){
         s = UPDATE_TIME;
+        break;
       }
+      if(t.tm_hour == 0 && t.tm_min == 0 && t.tm_sec == 0){
+        s = CHECK_BIRTHDAYS;
+      }
+      break;
+    case NEWYEAR:
+      start_new_year_countdown();
+      s = ON;
+      break;
+    case CHECK_BIRTHDAYS:
+      is_birthday = check_birthdays(t.tm_mday, t.tm_mon);
       break;
     case UPDATE_TIME:
         show_time(t.tm_hour, t.tm_min, R, G, B);
@@ -236,6 +327,8 @@ void loop(){
       sleep(2);
       break;
   }
+
+  
 
   
   

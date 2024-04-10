@@ -28,9 +28,12 @@ const uint8_t ZEHN[4] = {51,68,71,88};
 const uint8_t ELF[3] = {7,12,27};
 const uint8_t ZWOELF[5] = {55,64,75,84,95};
 
+const uint8_t DOTS[4] = {113, 110, 111, 112};
 const uint8_t DOT_1[1] = {113};
 const uint8_t DOT_2[1] = {110};
 const uint8_t DOT_3[1] = {111};
 const uint8_t DOT_4[1] = {112};
+
+const uint8_t HEART_1[13] = {5,6, 12,13,14,26,27,28,32,33,34,46,45};
 
 //////////////////////////////////
