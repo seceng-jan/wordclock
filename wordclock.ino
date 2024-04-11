@@ -14,7 +14,7 @@ enum STATE {
   ON,
   UPDATE_TIME,
   NEWYEAR,
-  CHECK_BIRTHDAYS,
+  CHECK_EVENTS,
 }; 
 
 enum STATE s; 
@@ -31,7 +31,9 @@ const int presistorPin = 35;
 int R = 0, G = 0, B = 0;
 int R_OLD = 0, G_OLD = 0, B_OLD = 0;
 int brightness=0;
+
 bool is_birthday = false;
+bool is_christmas = false;
 
 int minute = -1;
 
@@ -150,6 +152,23 @@ void start_new_year_countdown(){
   sleep(10);
 }
 
+void christmas_lights(){
+  for(int i=0; i<60; i++){
+    enable_leds(DOT_1, 1, 150, 0, 0);
+    enable_leds(DOT_2, 1, 0, 150, 0);
+    enable_leds(DOT_3, 1, 150, 0, 0);    
+    enable_leds(DOT_4, 1, 0, 150, 0);
+    pixels.show();
+    delay(500);
+    enable_leds(DOT_4, 1, 150, 0, 0);
+    enable_leds(DOT_1, 1, 0, 150, 0);
+    enable_leds(DOT_2, 1, 150, 0, 0);    
+    enable_leds(DOT_3, 1, 0, 150, 0);
+    pixels.show();
+    delay(500);
+  }
+}
+
 void show_time(int hours, int minutes, uint8_t R, uint8_t G, uint8_t B){
   R_OLD = R;
   G_OLD = G; 
@@ -157,13 +176,12 @@ void show_time(int hours, int minutes, uint8_t R, uint8_t G, uint8_t B){
   disable_all_leds();
   enable_leds(ES_IST, sizeof(ES_IST), R, G, B);
 
-  if(is_birthday){
-    enable_leds(HEART_1, sizeof(HEART_1), 150, 0,0);
-  }
-
   // Set minutes
   bool h_plus_one = false;
   if(minutes < 5){
+    if(is_birthday){
+      enable_leds(HEART_1, sizeof(HEART_1), 150, 0,0);
+    }
     enable_leds(UHR, sizeof(UHR), R, G, B);
   }else if(minutes < 10){
     enable_leds(FUENF_1, sizeof(FUENF_1), R, G, B);
@@ -247,6 +265,10 @@ void show_time(int hours, int minutes, uint8_t R, uint8_t G, uint8_t B){
     case(10): enable_leds(ZEHN, sizeof(ZEHN), R, G, B); break;
     case(11): enable_leds(ELF, sizeof(ELF), R, G, B); break;
   }
+
+  if(is_christmas && minutes < 2){
+    christmas_lights();
+  }
 }
 
 void disable_all_leds(){
@@ -301,15 +323,21 @@ void loop(){
         break;
       }
       if(t.tm_hour == 0 && t.tm_min == 0 && t.tm_sec == 0){
-        s = CHECK_BIRTHDAYS;
+        s = CHECK_EVENTS;
       }
       break;
     case NEWYEAR:
       start_new_year_countdown();
       s = ON;
       break;
-    case CHECK_BIRTHDAYS:
+    case CHECK_EVENTS:
       is_birthday = check_birthdays(t.tm_mday, t.tm_mon);
+      if(t.tm_mon == 11 && t.tm_mday >=24 && t.tm_mday <=26){
+        is_christmas = true;
+      }else{
+        is_christmas = false;
+      }
+      s = ON;
       break;
     case UPDATE_TIME:
         show_time(t.tm_hour, t.tm_min, R, G, B);
