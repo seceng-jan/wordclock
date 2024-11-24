@@ -3,7 +3,7 @@
 //   DEVICE-SPECIFIC LED SERVICES //
 ////////////////////////////////////
 
-#include "extras/PwmPin.h"                          // library of various PWM functions
+//#include "extras/PwmPin.h"                          // library of various PWM functions
 #include <Adafruit_NeoPixel.h>
 
 

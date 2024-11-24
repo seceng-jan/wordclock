@@ -1,4 +1,5 @@
 #include "HomeSpan.h" 
+#include <time.h>
 //#include "DCF77.h"
 
 #include "DEV_LED.h"     
@@ -19,11 +20,14 @@ enum STATE {
 
 enum STATE s; 
 
-struct tm t;
+struct tm timeinfo;
 time_t now;
 
 #define DCF_PIN 2	         // Connection pin to DCF 77 device
 #define DCF_INTERRUPT 0		 // Interrupt number associated with pin
+
+#define HUB_NAME "ESP32-Wordclock"
+#define CLOCK_NAME "Wordclock"
 //DCF77 DCF = DCF77(DCF_PIN,DCF_INTERRUPT);
 
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(114, 4, NEO_GRB + NEO_KHZ800);
@@ -46,7 +50,7 @@ void setup() {
   //DCF.Start();
 
   // HomeKit Setup
-  homeSpan.begin(Category::Bridges,"WordClock_test");
+  homeSpan.begin(Category::Bridges, HUB_NAME);
   
   new SpanAccessory();  
     new Service::AccessoryInformation();
@@ -55,7 +59,7 @@ void setup() {
   new SpanAccessory();                                                          
   new Service::AccessoryInformation();    
     new Characteristic::Identify();               
-    new Characteristic::Name("Wordclock_test"); 
+    new Characteristic::Name(CLOCK_NAME); 
   new DEV_RgbLED(&pixels, &R, &G, &B);
 
   homeSpan.autoPoll();
@@ -85,11 +89,12 @@ void setup() {
   wifi_connected = true;
 
   configTime(3600, 3600, "pool.ntp.org");
-  time(&now);
-
   // Set timezone to Germany
-  //setenv("TZ", "ET-1CEST,M3.5.0,M10.5.0/03:00:00", 1);
-  //tzset();
+  setenv("TZ", "CET-1CEST,M3.5.0,M10.5.0/3", 1);
+  tzset();
+
+  
+  time(&now);
 
 } // end of setup()
 
@@ -300,8 +305,9 @@ void toggle_led(const uint8_t* led, uint8_t r, uint8_t g, uint8_t b){
 
 void fetchTime(){
   time(&now); // calls the NTP server once a hour
-  getLocalTime(&t);
-  //Serial.println(&t, "%A, %B %d %Y %H:%M:%S");
+  localtime_r(&now, &timeinfo);
+  //Serial.println(timeinfo.tm_mon);
+  //Serial.println(&timeinfo, "%A, %B %d %Y %H:%M:%S");
 }
 
 void loop(){  
@@ -309,12 +315,12 @@ void loop(){
     case ON:
       fetchTime();
       // Check for new year since that is obviously the most important
-      if(t.tm_mon == 11 && t.tm_mday == 31 && t.tm_hour == 23 && t.tm_min == 59 && t.tm_sec == 40){
+      if(timeinfo.tm_mon == 11 && timeinfo.tm_mday == 31 && timeinfo.tm_hour == 23 && timeinfo.tm_min == 59 && timeinfo.tm_sec == 40){
         s = NEWYEAR;
         break;
       }
-      if(t.tm_min != minute){
-        minute = t.tm_min;
+      if(timeinfo.tm_min != minute){
+        minute = timeinfo.tm_min;
         s = UPDATE_TIME;
         break;
       }
@@ -322,7 +328,7 @@ void loop(){
         s = UPDATE_TIME;
         break;
       }
-      if(t.tm_hour == 0 && t.tm_min == 0 && t.tm_sec == 0){
+      if(timeinfo.tm_hour == 0 && timeinfo.tm_min == 0 && timeinfo.tm_sec == 0){
         s = CHECK_EVENTS;
       }
       break;
@@ -331,8 +337,8 @@ void loop(){
       s = ON;
       break;
     case CHECK_EVENTS:
-      is_birthday = check_birthdays(t.tm_mday, t.tm_mon);
-      if(t.tm_mon == 11 && t.tm_mday >=24 && t.tm_mday <=26){
+      is_birthday = check_birthdays(timeinfo.tm_mday, timeinfo.tm_mon);
+      if(timeinfo.tm_mon == 11 && timeinfo.tm_mday >=24 && timeinfo.tm_mday <=26){
         is_christmas = true;
       }else{
         is_christmas = false;
@@ -340,7 +346,7 @@ void loop(){
       s = ON;
       break;
     case UPDATE_TIME:
-        show_time(t.tm_hour, t.tm_min, R, G, B);
+        show_time(timeinfo.tm_hour, timeinfo.tm_min, R, G, B);
         if(R == 0 && G == 0 && B == 0){
           s = OFF;
         }else{
