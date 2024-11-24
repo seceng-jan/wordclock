@@ -16,3 +16,5 @@ Für die Entwicklund sind folgende Libraries nötig:
 - HomeSpan Libary -- Version 1.9.1
 - Adafruit NeoPixel -- Version 1.3.3
 - esp32 Board -- Version 2.0.17
+
+Der Code ist verfügbar auf: https://github.com/seceng-jan/wordclock
