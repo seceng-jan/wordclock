@@ -7,10 +7,11 @@ struct birthday_t{
   uint8_t day;
 };
 
-struct birthday_t a = {12, 25};
+struct birthday_t jesus = {12,24};
 
 
-struct birthday_t events[] = {a};
+
+struct birthday_t events[] = {jesus};
 
 bool check_birthdays(int day, int month){
 
