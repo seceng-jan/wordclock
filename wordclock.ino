@@ -227,8 +227,10 @@ void show_time(int hours, int minutes, uint8_t R, uint8_t G, uint8_t B){
   // Set minutes
   bool h_plus_one = false;
   if(minutes < 5){
-    if(is_birthday){
-      enable_leds(HEART_1, sizeof(HEART_1), 150, 0,0);
+    if(is_birthday && minutes < 1){
+      disable_all_leds();
+      enable_leds_glow(HEART_2, sizeof(HEART_2), 200, 0,0);
+      return;
     }
     enable_leds(UHR, sizeof(UHR), R, G, B);
   }else if(minutes < 10){
@@ -328,6 +330,21 @@ void enable_leds_party(const uint8_t* ptr, int lenght){
     uint8_t colors[3] = {0, 0, 0};
     colors[rand()%3] = 150;
     pixels.setPixelColor(ptr[i], pixels.Color(rand()%150, rand()%150, rand()%150));
+  }
+}
+
+void enable_leds_glow(const uint8_t* ptr, int lenght, uint8_t r, uint8_t g, uint8_t b){
+  for(int i =  0; i < lenght/sizeof(uint8_t); i++){
+    int r_current = (pixels.getPixelColor(ptr[i]) >> 16) & 0xFF;
+    int g_current = (pixels.getPixelColor(ptr[i]) >> 8) & 0xFF;
+    int b_current = pixels.getPixelColor(ptr[i]) & 0xFF;
+    r_current = r_current+((r - r_current) >> 3)+(rand()%3)-1;
+    g_current = g_current+((g - g_current) >> 3)+(rand()%3)-1;
+    b_current = b_current+((b - b_current) >> 3)+(rand()%3)-1;
+    if(r_current < 0) r_current = 0;
+    if(g_current < 0) g_current = 0;
+    if(b_current < 0) b_current = 0;
+    pixels.setPixelColor(ptr[i], pixels.Color(r_current, g_current, b_current));
   }
 }
 
