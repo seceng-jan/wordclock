@@ -418,7 +418,7 @@ void loop(){
       break;
     case OFF:
       if(R != 0 || G != 0 || B != 0){
-        s = ON;
+        s = CHECK_EVENTS;
       }
       sleep(2);
       break;
