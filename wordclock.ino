@@ -144,52 +144,62 @@ inline struct RGBW rgb_2_rgbw(int r, int g, int b) {
 }
 
 void start_new_year_countdown(){
+  for(int i=0;i<10; i++){
+    disable_all_leds();
+    enable_leds_party(ZWANZIG_1, sizeof(ZWANZIG_1));
+    if(i&1){
+      enable_leds_party(DOTS, sizeof(DOTS));
+    }
+    pixels.show();
+    sleep(1);
+  }
   disable_all_leds();
-  enable_leds(ZWANZIG_1, sizeof(ZWANZIG_1), R, G, B);
-  pixels.show();
-  sleep(10);
-  disable_all_leds();
-  enable_leds(ZEHN_1, sizeof(ZEHN_1), R, G, B);
-  pixels.show();
-  sleep(1);
-  disable_all_leds();
-  enable_leds(NEUN, sizeof(NEUN), R, G, B);
-  pixels.show();
-  sleep(1);
-  disable_all_leds();
-  enable_leds(ACHT, sizeof(ACHT), R, G, B);
+  enable_leds_party(ZEHN_1, sizeof(ZEHN_1));
   pixels.show();
   sleep(1);
   disable_all_leds();
-  enable_leds(SIEBEN, sizeof(SIEBEN), R, G, B);
+  enable_leds_party(NEUN, sizeof(NEUN));
+  enable_leds_party(DOTS, sizeof(DOTS));
   pixels.show();
   sleep(1);
   disable_all_leds();
-  enable_leds(SECHS, sizeof(SECHS), R, G, B);
+  enable_leds_party(ACHT, sizeof(ACHT));
   pixels.show();
   sleep(1);
   disable_all_leds();
-  enable_leds(FUENF, sizeof(FUENF), R, G, B);
+  enable_leds_party(SIEBEN, sizeof(SIEBEN));
+  enable_leds_party(DOTS, sizeof(DOTS));
   pixels.show();
   sleep(1);
   disable_all_leds();
-  enable_leds(VIER, sizeof(VIER), R, G, B);
+  enable_leds_party(SECHS, sizeof(SECHS));
   pixels.show();
   sleep(1);
   disable_all_leds();
-  enable_leds(DREI, sizeof(DREI), R, G, B);
+  enable_leds_party(FUENF, sizeof(FUENF));
+  enable_leds_party(DOTS, sizeof(DOTS));
   pixels.show();
   sleep(1);
   disable_all_leds();
-  enable_leds(ZWEI, sizeof(ZWEI), R, G, B);
+  enable_leds_party(VIER, sizeof(VIER));
   pixels.show();
   sleep(1);
   disable_all_leds();
-  enable_leds(EINS, sizeof(EINS), R, G, B);
+  enable_leds_party(DREI, sizeof(DREI));
+  enable_leds_party(DOTS, sizeof(DOTS));
   pixels.show();
   sleep(1);
   disable_all_leds();
-  for(int i = 0; i < 240; i++){
+  enable_leds_party(ZWEI, sizeof(ZWEI));
+  pixels.show();
+  sleep(1);
+  disable_all_leds();
+  enable_leds_party(EINS, sizeof(EINS));
+  enable_leds_party(DOTS, sizeof(DOTS));
+  pixels.show();
+  sleep(1);
+  disable_all_leds();
+  for(int i = 0; i < 600; i++){
     enable_leds_party(ES_IST, sizeof(ES_IST));
     enable_leds_party(UHR, sizeof(UHR));
     enable_leds_party(ZWOELF, sizeof(ZWOELF));
@@ -197,7 +207,26 @@ void start_new_year_countdown(){
     pixels.show();
     delay(500);
   }
-  sleep(10);
+  disable_all_leds();
+  for(int i = 0; i < 600; i++){
+    enable_leds_party(ES_IST, sizeof(ES_IST));
+    enable_leds_party(FUENF_1, sizeof(FUENF_1));
+    enable_leds_party(NACH, sizeof(NACH));
+    enable_leds_party(ZWOELF, sizeof(ZWOELF));
+    enable_leds_party(DOTS, sizeof(DOTS));
+    pixels.show();
+    delay(500);
+  }
+  disable_all_leds();
+  for(int i = 0; i < 600; i++){
+    enable_leds_party(ES_IST, sizeof(ES_IST));
+    enable_leds_party(FUENF_1, sizeof(ZEHN_1));
+    enable_leds_party(NACH, sizeof(NACH));
+    enable_leds_party(ZWOELF, sizeof(ZWOELF));
+    enable_leds_party(DOTS, sizeof(DOTS));
+    pixels.show();
+    delay(500);
+  }
 }
 
 void christmas_lights(){
@@ -327,9 +356,8 @@ void disable_all_leds(){
 
 void enable_leds_party(const uint8_t* ptr, int lenght){
   for(int i =  0; i < lenght/sizeof(uint8_t); i++){
-    uint8_t colors[3] = {0, 0, 0};
-    colors[rand()%3] = 150;
-    pixels.setPixelColor(ptr[i], pixels.Color(rand()%150, rand()%150, rand()%150));
+    uint8_t colors[3] = {rand()%150, rand()%150, rand()%150};
+    pixels.setPixelColor(ptr[i], pixels.Color(colors[0],colors[1],colors[2]));
   }
 }
 
