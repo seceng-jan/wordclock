@@ -1,4 +1,5 @@
-
+#ifndef DATES_H
+#define DATES_H
 
 
 
@@ -23,4 +24,4 @@ bool check_birthdays(int day, int month){
   return false;
 }
 
-//////////////////////////////////
+#endif
