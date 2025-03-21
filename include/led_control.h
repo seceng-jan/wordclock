@@ -9,7 +9,16 @@ extern Adafruit_NeoPixel pixels;
 extern int R, G, B;
 extern int R_OLD, G_OLD, B_OLD;
 
+struct RGBW {
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
+    uint8_t w;
+};
+
 // Function prototypes
+struct RGBW rgb_2_rgbw(uint8_t r, uint8_t g, uint8_t b);
+int min3(int a, int b, int c);
 void led_init();
 void led_update();
 bool is_led_changed();

@@ -10,6 +10,7 @@
 #include "effects.h"
 #include "led_control.h"
 #include "words.h"
+#include "ota_update.h"
 #include "config.h"
 
 

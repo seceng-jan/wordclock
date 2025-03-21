@@ -5,6 +5,7 @@ void setup() {
   
   // Initialize Serial
   Serial.begin(115200);
+  Serial.println("Starting Serial");
   
   // HomeKit Setup
   homeSpan.begin(Category::Bridges, HUB_NAME);
@@ -12,6 +13,16 @@ void setup() {
 
   // Led Init
   led_init();
+  new SpanAccessory();  
+    new Service::AccessoryInformation();
+      new Characteristic::Identify();
+
+  new SpanAccessory();                                                          
+  new Service::AccessoryInformation();    
+    new Characteristic::Identify();               
+    new Characteristic::Name(CLOCK_NAME); 
+  new DEV_RgbLED(&pixels, &R, &G, &B);
+
 
   s = OFF;
   srand(time(0));
@@ -34,6 +45,9 @@ void setup() {
 
   
   time(&now);
+
+  // Setup OTA
+  ota_handler();
 
 } // end of setup()
 
@@ -104,6 +118,8 @@ void loop(){
       sleep(2);
       break;
   }
+
+  ota_loop();
     
 } // end of loop()
 
