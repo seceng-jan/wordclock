@@ -5,7 +5,7 @@
 
 //#include "extras/PwmPin.h"                          // library of various PWM functions
 #include <Adafruit_NeoPixel.h>
-
+#include "HomeSpan.h"
 
 struct DEV_RgbLED : Service::LightBulb {       // RGB LED (Command Cathode)
 
