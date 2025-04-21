@@ -29,10 +29,18 @@ const uint8_t ELF[3] = {7,12,27};
 const uint8_t ZWOELF[5] = {55,64,75,84,95};
 
 const uint8_t DOTS[4] = {113, 110, 111, 112};
+
+#if (LED_IS_RGBW == 1) // On the RGBW clock, the dots are wired differently
+const uint8_t DOT_1[1] = {111};
+const uint8_t DOT_2[1] = {110};
+const uint8_t DOT_3[1] = {113};
+const uint8_t DOT_4[1] = {112};
+#else
 const uint8_t DOT_1[1] = {113};
 const uint8_t DOT_2[1] = {110};
 const uint8_t DOT_3[1] = {111};
 const uint8_t DOT_4[1] = {112};
+#endif
 
 const uint8_t HEART_1[13] = {5,6, 12,13,14,26,27,28,32,33,34,46,45};
 const uint8_t HEART_2[39] = {51,47,33,34,24,23,22,38,41,57,61,78,82,83,84,74,73,67,37,36,35,42,43,44,45,46,56,55,54,53,52,62,63,64,65,66,77,76,75};

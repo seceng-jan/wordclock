@@ -21,7 +21,7 @@ void setup() {
   new Service::AccessoryInformation();    
     new Characteristic::Identify();               
     new Characteristic::Name(CLOCK_NAME); 
-  new DEV_RgbLED(&pixels, &R, &G, &B);
+  led = new DEV_RgbLED(&R, &G, &B);
 
 
   s = OFF;
@@ -50,6 +50,16 @@ void setup() {
   ota_handler();
 
 } // end of setup()
+
+void toggle_status(){
+  if(s == OFF){
+    led->power->setVal(true);
+    led->update();
+  }else{
+    led->power->setVal(false);
+    led->update();
+  }
+}
 
 void loop(){  
   switch(s){

@@ -12,6 +12,7 @@ struct birthday_t jesus = {12,24};
 
 
 
+
 struct birthday_t events[] = {jesus};
 
 bool check_birthdays(int day, int month){

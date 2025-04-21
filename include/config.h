@@ -9,4 +9,7 @@
 #define URL "wordclock" // http://wordclock.local
 
 #define LED_IS_RGBW 1 //Choose between RGB and RGBW
+
+// extern functions
+extern void toggle_status();
 #endif

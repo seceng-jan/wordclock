@@ -9,7 +9,7 @@
 
 struct DEV_RgbLED : Service::LightBulb {       // RGB LED (Command Cathode)
 
-  Adafruit_NeoPixel *mypixels;
+  //Adafruit_NeoPixel *mypixels;
   int *R, *G, *B;
   
   SpanCharacteristic *power;                   // reference to the On Characteristic
@@ -18,12 +18,11 @@ struct DEV_RgbLED : Service::LightBulb {       // RGB LED (Command Cathode)
   SpanCharacteristic *V;                       // reference to the Brightness Characteristic
   
   
-  DEV_RgbLED(Adafruit_NeoPixel *pixels, int *pR, int *pG, int *pB) : Service::LightBulb(){       // constructor() method
+  DEV_RgbLED(int *pR, int *pG, int *pB) : Service::LightBulb(){       // constructor() method
     
     R = pR;
     G = pG;
     B = pB;
-    mypixels = pixels;
     power=new Characteristic::On(1);                    
     H=new Characteristic::Hue(0);              // instantiate the Hue Characteristic with an initial value of 0 out of 360
     S=new Characteristic::Saturation(0);       // instantiate the Saturation Characteristic with an initial value of 0%

@@ -29,8 +29,10 @@ void setup();
 void loop();
 void fetchTime();
 void show_time(int hours, int minutes, uint8_t r, uint8_t g, uint8_t b);
+void toggle_status();
 
 // Global variables
+DEV_RgbLED* led = nullptr; // Declare a pointer to store the object
 bool wifi_connected = false;
 enum STATE s; 
 
